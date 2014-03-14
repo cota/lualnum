@@ -1,0 +1,7 @@
+*.o
+*.a
+bin
+include
+man
+lua
+luac
