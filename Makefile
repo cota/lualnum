@@ -45,6 +45,13 @@ TO_BIN= lua luac
 TO_INC= lua.h luaconf.h lualib.h lauxlib.h ../etc/lua.hpp
 TO_LIB= liblua.a
 TO_MAN= lua.1 luac.1
+# What to save during uninstall.
+ifeq ($(INSTALL_TOP),..)
+# on a local install, this is part of the source tree, so save it
+TO_SAVE= ../etc/lua.hpp
+else
+TO_SAVE=
+endif
 
 # Lua version and release.
 V= 5.1
@@ -64,6 +71,12 @@ install: dummy
 	cd src && $(INSTALL_DATA) $(TO_INC) $(INSTALL_INC)
 	cd src && $(INSTALL_DATA) $(TO_LIB) $(INSTALL_LIB)
 	cd doc && $(INSTALL_DATA) $(TO_MAN) $(INSTALL_MAN)
+
+uninstall: dummy
+	cd src && $(RM) $(addprefix $(INSTALL_BIN)/, $(filter-out $(TO_SAVE), $(TO_BIN)))
+	cd src && $(RM) $(addprefix $(INSTALL_INC)/, $(filter-out $(TO_SAVE), $(TO_INC)))
+	cd src && $(RM) $(addprefix $(INSTALL_LIB)/, $(filter-out $(TO_SAVE), $(TO_LIB)))
+	cd src && $(RM) $(addprefix $(INSTALL_MAN)/, $(filter-out $(TO_SAVE), $(TO_MAN)))
 
 ranlib:
 	cd src && cd $(INSTALL_LIB) && $(RANLIB) $(TO_LIB)
